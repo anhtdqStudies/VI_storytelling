@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Trình chiếu vòng đời dự án ATS và vai trò ATS VI." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <title>Vòng đời dự án ATS | ATS VI</title>
+    <script type="module" crossorigin src="/assets/index-Mez-Qi-0.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-Cdivum3y.css">
+  </head>
+  <body>
+    <main class="story" data-scene="lifecycle">
+      <div class="noise" aria-hidden="true"></div>
+      <div class="ambient ambient-a" aria-hidden="true"></div>
+      <div class="ambient ambient-b" aria-hidden="true"></div>
+      <div class="ambient ambient-c" aria-hidden="true"></div>
+      <canvas class="starfield" aria-hidden="true"></canvas>
+
+      <nav class="scene-nav" aria-label="Chuyển chế độ trình chiếu">
+        <button class="scene-pill is-active" type="button" data-scene="lifecycle">Vòng đời</button>
+        <button class="scene-pill" type="button" data-scene="pressure">Áp lực</button>
+        <button class="scene-pill" type="button" data-scene="vi">VI</button>
+        <button class="scene-pill scene-pill-ghost" type="button" data-action="tour">Auto</button>
+      </nav>
+
+      <header class="flow-header">
+        <p class="flow-eyebrow" data-bind="eyebrow">ATS · Project lifecycle</p>
+        <h1 class="flow-title" data-bind="title">Vòng đời dự án ATS</h1>
+      </header>
+
+      <div class="flow-canvas" data-parallax>
+        <div class="flow-stage-wrap" id="flow-stage-wrap">
+          <div class="flow-rig thread-rig">
+          <svg class="thread-svg" viewBox="0 0 1200 480" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <defs>
+              <linearGradient id="threadGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#54d7ff" stop-opacity="0.35" />
+                <stop offset="35%" stop-color="#54d7ff" />
+                <stop offset="70%" stop-color="#8df2c8" />
+                <stop offset="100%" stop-color="#8df2c8" stop-opacity="0.4" />
+              </linearGradient>
+              <filter id="threadGlow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="5" result="b" />
+                <feMerge>
+                  <feMergeNode in="b" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            <path id="thread-path-shadow" class="thread-path-shadow" d="" />
+            <path id="thread-path" class="thread-path-core" filter="url(#threadGlow)" d="" />
+            <path id="thread-path-travel" class="thread-path-travel" d="" />
+            <circle class="thread-needle" r="5" fill="#fff" filter="url(#threadGlow)">
+              <animateMotion id="thread-motion" dur="16s" repeatCount="indefinite" path="" />
+            </circle>
+          </svg>
+
+          <ol class="thread-track" id="flow-track" aria-label="Các bước vòng đời dự án"></ol>
+          </div>
+        </div>
+
+        <section class="pressure-stage" id="pressure-stage" hidden aria-label="Áp lực khi scale">
+          <div class="pressure-stage-inner" id="pressure-stage-inner"></div>
+        </section>
+
+        <section class="vi-stage" id="vi-stage" hidden aria-label="ATS VI">
+          <div class="vi-stage-inner" id="vi-stage-inner"></div>
+        </section>
+      </div>
+
+      <footer class="story-footer">
+        <div class="progress-track" aria-hidden="true"><span class="progress-fill"></span></div>
+        <p class="footer-hint">
+          <span id="vi-beat-indicator" class="vi-beat-indicator" hidden>VI · 1 / 6</span>
+          <span class="footer-hint-text">Space beat · ↑↓ · ← → scene · Auto tour</span>
+        </p>
+      </footer>
+    </main>
+
+  </body>
+</html>
