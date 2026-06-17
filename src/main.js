@@ -4,7 +4,7 @@ import {
   scenes,
   viBeats,
 } from './data.js'
-import { animatePressureSceneIn, renderPressureStage } from './pressure-stage.js'
+import { animatePressureSceneIn, renderPressureStage, settlePressureScene } from './pressure-stage.js'
 import {
   applyThreadPaths,
   buildThreadPath,
@@ -16,7 +16,6 @@ import {
 } from './thread-geometry.js'
 import {
   animateViSceneIn,
-  applyViBeatDom,
   getViBeatIndex,
   isInteractiveBeat,
   isLifecycleBeat,
@@ -25,6 +24,7 @@ import {
   onViSceneLeave,
   prevViBeat,
   renderViStage,
+  settleViScene,
 } from './vi-stage.js'
 import './styles.css'
 
@@ -44,6 +44,7 @@ let currentSceneIndex = 0
 let tourTween = null
 let transitionLock = false
 let resizeRaf = 0
+const visitedScenes = new Set(['lifecycle'])
 
 function syncThreadLayout() {
   const svg = document.querySelector('.thread-svg')
@@ -116,8 +117,14 @@ function applySceneVisibility(sceneId) {
         pointerEvents: 'none',
       })
     }
+    if (flowStage) {
+      gsap.set(flowStage, {
+        autoAlpha: 0,
+        visibility: 'hidden',
+        pointerEvents: 'none',
+      })
+    }
     onViSceneEnter({ reduceMotion })
-    applyViBeatDom(getViBeatIndex())
     return
   }
 
@@ -201,21 +208,105 @@ function updateProgress(index) {
   }
 }
 
-function animateSceneIn(sceneId) {
-  if (reduceMotion)
-    return
+function primeSceneForIntro(sceneId) {
+  gsap.set('.flow-header', { autoAlpha: 0, y: 14, filter: 'blur(6px)' })
 
   if (sceneId === 'pressure') {
-    animatePressureSceneIn({ reduceMotion })
+    gsap.set('.pressure-stage', { autoAlpha: 1, y: 0, visibility: 'visible', filter: 'blur(0px)' })
     return
   }
 
   if (sceneId === 'vi') {
-    animateViSceneIn({ reduceMotion })
+    gsap.set('.vi-stage', { autoAlpha: 1, y: 0, visibility: 'visible', filter: 'blur(0px)' })
     return
   }
 
-  gsap.fromTo(
+  gsap.set('.flow-stage-wrap', { autoAlpha: 0, y: 14, filter: 'blur(6px)' })
+}
+
+function revealSceneShell(sceneId) {
+  const targets = sceneId === 'vi'
+    ? '.vi-stage, .flow-header'
+    : sceneId === 'pressure'
+      ? '.pressure-stage, .flow-header'
+      : '.flow-stage-wrap, .flow-header'
+
+  gsap.set(targets, {
+    autoAlpha: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    visibility: 'visible',
+    clearProps: 'filter',
+  })
+}
+
+function settleSceneState(sceneId) {
+  if (sceneId === 'pressure') {
+    settlePressureScene()
+    return
+  }
+
+  if (sceneId === 'vi') {
+    settleViScene({ reduceMotion })
+    return
+  }
+
+  gsap.killTweensOf('.knot-body, .knot-label')
+  gsap.set('.knot-body, .knot-label', {
+    autoAlpha: 1,
+    y: 0,
+    scale: 1,
+    filter: 'blur(0px)',
+    clearProps: 'transform',
+  })
+}
+
+function animateSceneIn(sceneId) {
+  if (reduceMotion) {
+    settleSceneState(sceneId)
+    return Promise.resolve()
+  }
+
+  if (sceneId === 'pressure') {
+    const tl = animatePressureSceneIn({ reduceMotion })
+    gsap.to('.flow-header', {
+      autoAlpha: 1,
+      y: 0,
+      filter: 'blur(0px)',
+      duration: 0.55,
+      ease: 'power3.out',
+    })
+    return new Promise((resolve) => {
+      if (!tl) {
+        resolve()
+        return
+      }
+      const finish = () => resolve()
+      tl.eventCallback('onComplete', finish)
+      if (tl.progress() === 1)
+        finish()
+    })
+  }
+
+  if (sceneId === 'vi') {
+    return animateViSceneIn({ reduceMotion }).then(() => {
+      gsap.to('.flow-header', {
+        autoAlpha: 1,
+        y: 0,
+        filter: 'blur(0px)',
+        duration: 0.55,
+        ease: 'power3.out',
+      })
+    })
+  }
+
+  const tl = gsap.timeline()
+  tl.fromTo(
+    '.flow-header',
+    { autoAlpha: 0, y: 12, filter: 'blur(6px)' },
+    { autoAlpha: 1, y: 0, filter: 'blur(0px)', duration: 0.5, ease: 'power3.out' },
+  )
+  tl.fromTo(
     '.knot-body',
     { autoAlpha: 0, y: 28, scale: 0.94, filter: 'blur(6px)' },
     {
@@ -228,7 +319,11 @@ function animateSceneIn(sceneId) {
       ease: 'power3.out',
       overwrite: 'auto',
     },
+    '-=0.25',
   )
+  return new Promise((resolve) => {
+    tl.eventCallback('onComplete', resolve)
+  })
 }
 
 function resetTour() {
@@ -261,50 +356,76 @@ function goToScene(index, { keepTour = false } = {}) {
   const nextScene = scenes[nextIndex]
   const prevScene = scenes[currentSceneIndex]
 
+  const isFirstVisit = !visitedScenes.has(nextScene.id)
+
   const run = async () => {
-    if (!reduceMotion && prevScene.id !== nextScene.id) {
-      const prevTarget = prevScene.id === 'vi'
-        ? (isLifecycleBeat() ? '.flow-stage-wrap, .vi-stage, .flow-header' : '.vi-stage, .flow-header')
-        : [`.flow-header`, sceneTransitionTarget(prevScene.id)]
-      await gsap.to(prevTarget, {
-        autoAlpha: 0,
-        y: 18,
-        filter: 'blur(8px)',
-        duration: 0.32,
-        ease: 'power2.in',
-        stagger: 0.04,
-      })
-    }
+    try {
+      gsap.killTweensOf('.pressure-intro, .pressure-card, .pressure-hero-glow, #pressure-counter, #pressure-capacity-fill, #pressure-capacity-pct')
 
-    if (prevScene.id === 'vi' && nextScene.id !== 'vi')
-      onViSceneLeave()
+      if (!reduceMotion && prevScene.id !== nextScene.id) {
+        const prevTarget = prevScene.id === 'vi'
+          ? (isLifecycleBeat() ? '.flow-stage-wrap, .vi-stage, .flow-header' : '.vi-stage, .flow-header')
+          : [`.flow-header`, sceneTransitionTarget(prevScene.id)]
+        await gsap.to(prevTarget, {
+          autoAlpha: 0,
+          y: 18,
+          filter: 'blur(8px)',
+          duration: 0.32,
+          ease: 'power2.in',
+          stagger: 0.04,
+        })
+      }
 
-    story.dataset.scene = nextScene.id
-    setActivePills(nextScene.id)
-    updateHeader(nextScene.id)
-    updateProgress(nextIndex)
-    currentSceneIndex = nextIndex
-    applySceneVisibility(nextScene.id)
+      if (prevScene.id === 'vi' && nextScene.id !== 'vi')
+        onViSceneLeave()
 
-    if (nextScene.id !== 'pressure')
-      scheduleThreadSync()
+      story.dataset.scene = nextScene.id
+      setActivePills(nextScene.id)
+      updateHeader(nextScene.id)
+      updateProgress(nextIndex)
+      currentSceneIndex = nextIndex
+      applySceneVisibility(nextScene.id)
 
-    if (!reduceMotion) {
+      if (nextScene.id !== 'pressure')
+        scheduleThreadSync()
+
       const nextTarget = nextScene.id === 'vi'
         ? '.vi-stage, .flow-header'
         : [`.flow-header`, sceneTransitionTarget(nextScene.id)]
-      await gsap.to(nextTarget, {
-        autoAlpha: 1,
-        y: 0,
-        filter: 'blur(0px)',
-        duration: 0.5,
-        ease: 'power3.out',
-        stagger: 0.05,
-      })
-    }
 
-    animateSceneIn(nextScene.id)
-    transitionLock = false
+      if (!reduceMotion) {
+        if (isFirstVisit) {
+          primeSceneForIntro(nextScene.id)
+          await animateSceneIn(nextScene.id)
+          revealSceneShell(nextScene.id)
+        }
+        else {
+          await gsap.to(nextTarget, {
+            autoAlpha: 1,
+            y: 0,
+            filter: 'blur(0px)',
+            duration: 0.42,
+            ease: 'power3.out',
+            stagger: 0.04,
+          })
+          settleSceneState(nextScene.id)
+        }
+      }
+      else {
+        settleSceneState(nextScene.id)
+        revealSceneShell(nextScene.id)
+      }
+
+      visitedScenes.add(nextScene.id)
+    }
+    catch (error) {
+      console.error('Scene transition failed:', error)
+      revealSceneShell(nextScene.id)
+      settleSceneState(nextScene.id)
+    }
+    finally {
+      transitionLock = false
+    }
   }
 
   return run()
@@ -553,6 +674,10 @@ function bootstrap() {
   updateHeader('lifecycle')
   updateProgress(0)
   story.dataset.scene = 'lifecycle'
+
+  const viIndicator = document.getElementById('vi-beat-indicator')
+  if (viIndicator)
+    viIndicator.hidden = true
 }
 
 bootstrap()

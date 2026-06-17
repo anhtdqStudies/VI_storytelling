@@ -1,8 +1,8 @@
 export const lifecycleSteps = [
   {
     id: 1,
-    label: 'Tiếp cận khách hàng',
-    hint: 'Trao đổi nhu cầu, bối cảnh và phạm vi sơ bộ với khách hàng.',
+    label: 'Phân tích cơ hội',
+    hint: 'Nhận yêu cầu báo giá; phân tích cơ hội, khả thi và làm rõ phạm vi với khách.',
     x: 9,
     threadY: 50,
     side: 'below',
@@ -10,8 +10,9 @@ export const lifecycleSteps = [
   },
   {
     id: 2,
-    label: 'Đánh giá khả thi',
-    hint: 'Xác định ATS có đủ năng lực, nguồn lực và rủi ro để nhận dự án.',
+    label: 'Chào thầu, thiết kế',
+    hint: 'Chuẩn bị hồ sơ chào thầu: giải pháp, quotation và phạm vi sơ bộ.',
+    vi: true,
     x: 25,
     threadY: 42,
     side: 'above',
@@ -19,8 +20,8 @@ export const lifecycleSteps = [
   },
   {
     id: 3,
-    label: 'Tạo bộ bản chào',
-    hint: 'Hình thành proposal: giải pháp, phạm vi, BOM, giá và tiến độ.',
+    label: 'Thiết kế kỹ thuật',
+    hint: 'Thiết kế chi tiết hệ thống điện; build phần mềm / hệ thống trên One ATS.',
     vi: true,
     x: 41,
     threadY: 54,
@@ -29,8 +30,8 @@ export const lifecycleSteps = [
   },
   {
     id: 4,
-    label: 'Triển khai kỹ thuật',
-    hint: 'Chuẩn bị hạ tầng, nhân sự hiện trường và kế hoạch thi công.',
+    label: 'Chuẩn bị và triển khai hiện trường',
+    hint: 'Mua sắm, FAT, thi công lắp đặt và triển khai tại hiện trường.',
     x: 57,
     threadY: 42,
     side: 'above',
@@ -38,9 +39,8 @@ export const lifecycleSteps = [
   },
   {
     id: 5,
-    label: 'Thiết kế / build kỹ thuật',
-    hint: 'Thiết kế chi tiết và build phần mềm / hệ thống trên nền One ATS.',
-    vi: true,
+    label: 'Đào tạo và bàn giao',
+    hint: 'SAT, đào tạo vận hành và chuyển giao hệ thống cho khách hàng.',
     x: 73,
     threadY: 54,
     side: 'below',
@@ -48,8 +48,8 @@ export const lifecycleSteps = [
   },
   {
     id: 6,
-    label: 'Bàn giao',
-    hint: 'Nghiệm thu, chuyển giao vận hành và tài liệu cho khách hàng.',
+    label: 'Bảo hành, bảo trì, hỗ trợ sau dự án',
+    hint: 'Duy trì hệ thống, bảo hành và hỗ trợ khách hàng sau bàn giao.',
     x: 89,
     threadY: 42,
     side: 'above',
@@ -128,12 +128,12 @@ export const viLayers = [
   },
 ]
 
-/** Năng lực hiện tại tại bước 3 (SFA) & 5 (Co-Builder) */
+/** Năng lực hiện tại tại bước 2 (SFA) & 3 (Co-Builder) */
 export const viCapabilities = {
-  3: {
+  2: {
     module: 'SFA',
     tagline: 'Solution Forming Assistant',
-    stepLabel: 'Bước 3 · Tạo bộ bản chào',
+    stepLabel: 'Bước 2 · Chào thầu, thiết kế',
     items: [
       'Gom tri thức từ tài liệu nội bộ',
       'Hỏi đáp theo tài liệu',
@@ -143,10 +143,10 @@ export const viCapabilities = {
     ],
     messageLine: 'Không thay người làm proposal — giúp có điểm xuất phát tốt hơn, nhanh hơn, dựa trên tri thức ATS.',
   },
-  5: {
+  3: {
     module: 'Co-Builder',
     tagline: 'Technical Build Pipeline',
-    stepLabel: 'Bước 5 · Thiết kế / build kỹ thuật',
+    stepLabel: 'Bước 3 · Thiết kế kỹ thuật',
     items: [
       'Quản lý project / template',
       'Upload & kiểm tra dữ liệu đầu vào',

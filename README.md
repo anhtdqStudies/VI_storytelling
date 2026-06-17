@@ -8,7 +8,7 @@ Standalone storytelling site for the ATS VI / Volt Intelligent company introduct
 2. **Áp lực** — meter overload + 3 pain cards khi scale nhiều dự án.
 3. **VI** — Director mode **6 beat**:
    - Beat 0–4: giới thiệu ATS VI + 3 lớn năng lực + transition
-   - Beat 5 (6/6): sợi chỉ full — **bấm bước 03 hoặc 05** để xem detail (không cần Space)
+   - Beat 5 (6/6): sợi chỉ full — **bấm bước 02 hoặc 03** để xem detail (không cần Space)
 
 ## Presenter controls
 
@@ -17,7 +17,7 @@ Standalone storytelling site for the ATS VI / Volt Intelligent company introduct
   - `←` / `→` — chuyển scene
   - `Space` / `↓` — beat tiếp (trong scene VI)
   - `↑` — beat trước (trong scene VI)
-  - Beat 5 (6/6): **click** nút bước 03 hoặc 05 — Space không làm gì ở beat này
+  - Beat 5 (6/6): **click** nút bước 02 hoặc 03 — Space không làm gì ở beat này
 - Footer hiện `VI · n / 6` khi đang ở scene VI
 - Full-screen: F11 trong trình duyệt
 - Auto tour: chỉ chuyển 3 scene; beat VI điều khiển thủ công

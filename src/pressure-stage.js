@@ -79,14 +79,6 @@ export function animatePressureSceneIn({ reduceMotion = false } = {}) {
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
   tl.to('.pressure-intro', { autoAlpha: 1, y: 0, duration: 0.6 })
-    .to('.pressure-hero-glow', {
-      scale: 1.12,
-      opacity: 0.5,
-      duration: 1.8,
-      repeat: -1,
-      yoyo: true,
-      ease: 'sine.inOut',
-    }, '<')
 
   if (counter) {
     const obj = { val: n.meterFrom, cap: 0 }
@@ -112,4 +104,39 @@ export function animatePressureSceneIn({ reduceMotion = false } = {}) {
     stagger: 0.12,
     ease: 'power3.out',
   }, '-=0.9')
+
+  startPressureGlowLoop()
+
+  return tl
+}
+
+export function startPressureGlowLoop() {
+  gsap.killTweensOf('.pressure-hero-glow')
+  gsap.to('.pressure-hero-glow', {
+    scale: 1.12,
+    opacity: 0.5,
+    duration: 1.8,
+    repeat: -1,
+    yoyo: true,
+    ease: 'sine.inOut',
+  })
+}
+
+export function settlePressureScene() {
+  const n = pressureNarrative
+  gsap.killTweensOf('.pressure-intro, .pressure-card, .pressure-hero-glow, #pressure-counter, #pressure-capacity-fill, #pressure-capacity-pct')
+  gsap.set('.pressure-intro, .pressure-card', { autoAlpha: 1, y: 0, clearProps: 'filter' })
+
+  const counter = document.getElementById('pressure-counter')
+  const capacityFill = document.getElementById('pressure-capacity-fill')
+  const capacityPct = document.getElementById('pressure-capacity-pct')
+
+  if (counter)
+    counter.textContent = String(n.meterTo)
+  if (capacityPct)
+    capacityPct.textContent = '118%'
+  if (capacityFill)
+    capacityFill.style.width = '100%'
+
+  startPressureGlowLoop()
 }

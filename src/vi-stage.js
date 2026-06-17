@@ -13,7 +13,7 @@ let knotClickBound = false
 let dismissClickBound = false
 
 const story = () => document.querySelector('.story')
-const FOCUS_STEPS = [3, 5]
+const FOCUS_STEPS = [2, 3]
 
 export function getViBeatIndex() {
   return currentBeatIndex
@@ -82,7 +82,7 @@ export function renderViStage() {
     </div>
 
     <div class="vi-lifecycle-overlay" id="vi-lifecycle-overlay" hidden>
-      <p class="vi-interactive-hint" id="vi-interactive-hint">Bấm bước <strong>03</strong> hoặc <strong>05</strong> trên sợi chỉ để xem ATS VI hỗ trợ gì</p>
+      <p class="vi-interactive-hint" id="vi-interactive-hint">Bấm bước <strong>02</strong> hoặc <strong>03</strong> trên sợi chỉ để xem ATS VI hỗ trợ gì</p>
       <div class="vi-detail-wrap" id="vi-detail-wrap" hidden></div>
     </div>
   `
@@ -208,7 +208,7 @@ function updateBeatIndicator() {
     el.textContent = `VI · ${currentBeatIndex + 1} / ${viBeats.length}`
   if (hint) {
     hint.textContent = isInteractiveBeat()
-      ? 'Bấm bước 03 / 05 trên sợi chỉ · ← → scene'
+      ? 'Bấm bước 02 / 03 trên sợi chỉ · ← → scene'
       : 'Space beat · ↑↓ · ← → scene · Auto tour'
   }
 }
@@ -431,7 +431,10 @@ export function goToViBeat(index, { animate = true, reduceMotion = false } = {})
     return Promise.resolve()
 
   return new Promise((resolve) => {
-    tl.eventCallback('onComplete', resolve)
+    const finish = () => resolve()
+    tl.eventCallback('onComplete', finish)
+    if (tl.progress() === 1)
+      finish()
   })
 }
 
@@ -455,8 +458,11 @@ export function resetViBeat({ reduceMotion = false } = {}) {
     delete root.dataset.viInteractive
   }
   applyViBeatDom(0)
-  if (!reduceMotion)
-    gsap.set('#vi-definition, .vi-layer, #vi-transition-badge, #vi-detail-wrap', { clearProps: 'all' })
+  if (!reduceMotion) {
+    gsap.set('#vi-definition, .vi-layer, #vi-transition-badge, #vi-detail-wrap', {
+      clearProps: 'transform,filter',
+    })
+  }
 }
 
 export function initViBeatState() {
@@ -466,7 +472,22 @@ export function initViBeatState() {
 
 export function animateViSceneIn({ reduceMotion = false } = {}) {
   resetViBeat({ reduceMotion })
-  return goToViBeat(0, { animate: !reduceMotion, reduceMotion })
+  return goToViBeat(0, { animate: !reduceMotion, reduceMotion }).then(() => {
+    gsap.set('#vi-definition, #vi-platform', { autoAlpha: 1, y: 0, visibility: 'visible' })
+  })
+}
+
+export function settleViScene({ reduceMotion = false } = {}) {
+  if (beatTween) {
+    beatTween.kill()
+    beatTween = null
+  }
+
+  resetViBeat({ reduceMotion })
+  gsap.set('#vi-definition, .vi-layer, #vi-transition-badge, #vi-interactive-hint, #vi-detail-wrap', {
+    autoAlpha: 1,
+    clearProps: 'x,y,scale,filter',
+  })
 }
 
 export function onViSceneEnter({ reduceMotion = false } = {}) {
@@ -480,9 +501,6 @@ export function onViSceneEnter({ reduceMotion = false } = {}) {
 
   if (indicator)
     indicator.hidden = false
-
-  resetViBeat({ reduceMotion })
-  return animateViSceneIn({ reduceMotion })
 }
 
 export function onViSceneLeave() {
