@@ -174,6 +174,63 @@ button {
   border-color: rgba(84, 215, 255, 0.38);
 }
 
+.scene-pill[data-scene="vi"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.scene-pill[data-scene="vi"] .vi-logo-mark--nav {
+  display: none;
+  width: 18px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.scene-pill[data-scene="vi"] .vi-logo-mark--nav-idle {
+  display: block;
+}
+
+.scene-pill[data-scene="vi"].is-active .vi-logo-mark--nav-idle {
+  display: none;
+}
+
+.scene-pill[data-scene="vi"].is-active .vi-logo-mark--nav-active {
+  display: block;
+}
+
+.scene-pill[data-scene="vi"].is-active .scene-pill-label {
+  color: inherit;
+}
+
+/* ── VI logo marks ── */
+
+.vi-logo-mark {
+  display: block;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+}
+
+.vi-logo-mark--intro {
+  width: clamp(96px, 12vw, 148px);
+  height: auto;
+  margin: 0 auto;
+  filter: drop-shadow(0 0 28px rgba(158, 120, 255, 0.35));
+}
+
+.vi-logo-mark--hero {
+  width: clamp(88px, 11vw, 132px);
+  height: auto;
+  filter: drop-shadow(0 0 32px rgba(158, 120, 255, 0.4));
+}
+
+.vi-logo-mark--footer {
+  width: 24px;
+  height: auto;
+  opacity: 0.9;
+}
+
 /* ── Header (hàng trên — không đè main) ── */
 
 .flow-header {
@@ -1027,13 +1084,6 @@ button {
   box-shadow: 0 0 56px rgba(84, 215, 255, 0.22);
 }
 
-.vi-transition-badge span {
-  font-size: clamp(44px, 5vw, 64px);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  color: var(--accent);
-}
-
 .vi-transition-badge em {
   font-size: clamp(12px, 1vw, 15px);
   font-style: normal;
@@ -1320,6 +1370,19 @@ button {
   font-weight: 500;
   letter-spacing: 0.06em;
   text-align: center;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+  color: rgba(143, 163, 184, 0.45);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 /* ── Responsive ── */

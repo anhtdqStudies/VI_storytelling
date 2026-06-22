@@ -5,6 +5,7 @@ import {
   viDefinition,
   viLayers,
 } from './data.js'
+import { VI_LOGO_GRADIENT } from './assets.js'
 
 let currentBeatIndex = 0
 let selectedStepId = null
@@ -68,12 +69,27 @@ export function renderViStage() {
 
   root.innerHTML = `
     <div class="vi-platform" id="vi-platform">
+      <img
+        class="vi-logo-mark vi-logo-mark--intro"
+        id="vi-define-logo"
+        src="${VI_LOGO_GRADIENT}"
+        alt="Volt Intelligent VI"
+        width="140"
+        height="96"
+        hidden
+      />
       <p class="vi-define-prompt" id="vi-define-prompt">Nhấn <strong>Space</strong> để xem ba lớp năng lực</p>
       <div class="vi-layer-stack" id="vi-layer-stack" hidden aria-label="Ba lớp năng lực ATS VI">
         ${layersHtml}
       </div>
       <div class="vi-transition-badge" id="vi-transition-badge" hidden aria-hidden="true">
-        <span>VI</span>
+        <img
+          class="vi-logo-mark vi-logo-mark--hero"
+          src="${VI_LOGO_GRADIENT}"
+          alt="VI"
+          width="120"
+          height="82"
+        />
         <em>Volt Intelligent</em>
       </div>
     </div>
@@ -226,7 +242,7 @@ function syncViHeaderSubtitle(beat) {
 }
 
 const LAYER_ORDER = ['knowledge', 'assistant', 'workflow']
-const VI_GSAP_TARGETS = '#vi-layer-stack, #vi-platform, .vi-layer, #vi-transition-badge, #vi-define-prompt, #vi-interactive-hint, #vi-detail-wrap, [data-bind="subtitle"]'
+const VI_GSAP_TARGETS = '#vi-layer-stack, #vi-platform, .vi-layer, #vi-transition-badge, #vi-define-prompt, #vi-define-logo, #vi-interactive-hint, #vi-detail-wrap, [data-bind="subtitle"]'
 
 function clearViGsapState() {
   gsap.killTweensOf(VI_GSAP_TARGETS)
@@ -328,6 +344,15 @@ function syncHiddenViElements(beat) {
   const layerStack = document.getElementById('vi-layer-stack')
   const platform = document.getElementById('vi-platform')
   const definePrompt = document.getElementById('vi-define-prompt')
+  const defineLogo = document.getElementById('vi-define-logo')
+
+  if (defineLogo) {
+    const show = beat.id === 'define'
+    defineLogo.hidden = !show
+    gsap.set(defineLogo, show
+      ? { autoAlpha: 1, visibility: 'visible', y: 0, scale: 1 }
+      : { autoAlpha: 0, visibility: 'hidden' })
+  }
 
   if (definePrompt) {
     const show = beat.id === 'define'
@@ -416,7 +441,8 @@ function animatePlatformBeat(beat, { fromTransition = false } = {}) {
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
   if (beat.id === 'define') {
-    tl.fromTo('[data-bind="subtitle"]', { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.55 })
+    tl.fromTo('#vi-define-logo', { autoAlpha: 0, y: 18, scale: 0.92 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.6 })
+      .fromTo('[data-bind="subtitle"]', { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.55 }, '-=0.4')
       .fromTo('#vi-define-prompt', { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.5 }, '-=0.35')
     return tl
   }
@@ -439,7 +465,7 @@ function animatePlatformBeat(beat, { fromTransition = false } = {}) {
 
   if (beat.id === 'transition') {
     tl.to('[data-bind="subtitle"]', { autoAlpha: 0, y: -8, duration: 0.3 })
-      .to('#vi-define-prompt', { autoAlpha: 0, y: -8, duration: 0.3 }, '<')
+      .to('#vi-define-logo, #vi-define-prompt', { autoAlpha: 0, y: -8, duration: 0.3 }, '<')
       .to('#vi-layer-stack', { autoAlpha: 0, scale: 0.88, y: -20, duration: 0.5 }, '<')
       .fromTo('#vi-transition-badge', { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.55, ease: 'back.out(1.5)' }, '-=0.15')
     return tl
