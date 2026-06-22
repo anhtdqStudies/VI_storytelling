@@ -1,6 +1,7 @@
 import { gsap } from 'gsap'
 import {
   lifecycleSteps,
+  pressureNarrative,
   scenes,
   viBeats,
 } from './data.js'
@@ -36,6 +37,7 @@ const story = document.querySelector('.story')
 const scenePills = Array.from(document.querySelectorAll('.scene-pill[data-scene]'))
 const titleEl = document.querySelector('[data-bind="title"]')
 const eyebrowEl = document.querySelector('[data-bind="eyebrow"]')
+const subtitleEl = document.querySelector('[data-bind="subtitle"]')
 const progressFill = document.querySelector('.progress-fill')
 const starCanvas = document.querySelector('.starfield')
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -192,6 +194,16 @@ function updateHeader(sceneId) {
     titleEl.textContent = meta.title
   if (eyebrowEl)
     eyebrowEl.textContent = meta.eyebrow
+  if (subtitleEl) {
+    if (sceneId === 'pressure') {
+      subtitleEl.textContent = pressureNarrative.lede
+      subtitleEl.hidden = false
+    }
+    else {
+      subtitleEl.textContent = ''
+      subtitleEl.hidden = true
+    }
+  }
 }
 
 function setActivePills(sceneId) {

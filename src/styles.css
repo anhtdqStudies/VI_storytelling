@@ -157,17 +157,39 @@ button {
   border-color: rgba(255, 255, 255, 0.08);
 }
 
-/* ── Header (góc trái trên — trình chiếu) ── */
+.scene-pill-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-color: rgba(84, 215, 255, 0.22);
+  background: rgba(84, 215, 255, 0.06);
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.scene-pill-link:hover {
+  color: var(--ink);
+  background: rgba(84, 215, 255, 0.14);
+  border-color: rgba(84, 215, 255, 0.38);
+}
+
+/* ── Header (hàng trên — không đè main) ── */
 
 .flow-header {
-  position: fixed;
-  top: clamp(20px, 3vh, 40px);
-  left: clamp(24px, 3.5vw, 56px);
+  position: relative;
+  flex-shrink: 0;
   z-index: 25;
   margin: 0;
-  max-width: min(620px, 48vw);
+  padding:
+    clamp(68px, 8.5vh, 88px)
+    clamp(24px, 3.5vw, 56px)
+    clamp(8px, 1.2vh, 16px)
+    clamp(24px, 3.5vw, 56px);
+  max-width: min(480px, 44vw);
   text-align: left;
   pointer-events: none;
+  overflow: visible;
 }
 
 .flow-canvas {
@@ -181,39 +203,50 @@ button {
   width: 100%;
   min-height: 0;
   overflow: visible;
-  padding: clamp(8px, 1.5vh, 20px) clamp(16px, 2.5vw, 40px) clamp(8px, 1.5vh, 16px);
+  padding: clamp(4px, 1vh, 12px) clamp(16px, 2.5vw, 40px) clamp(8px, 1.5vh, 16px);
 }
 
 .story[data-scene="lifecycle"] .flow-canvas {
-  padding-top: clamp(52px, 7vh, 80px);
+  padding-top: clamp(4px, 1vh, 12px);
 }
 
 .flow-eyebrow {
-  margin: 0 0 10px;
+  margin: 0 0 8px;
   display: inline-block;
-  padding: 6px 14px;
+  padding: 4px 11px;
   border: 1px solid rgba(84, 215, 255, 0.22);
   border-radius: 999px;
   background: rgba(84, 215, 255, 0.06);
   color: var(--accent);
-  font-size: clamp(9px, 0.75vw, 11px);
+  font-size: clamp(8px, 0.65vw, 10px);
   font-weight: 600;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
+  line-height: 1.35;
 }
 
 .flow-title {
   margin: 0;
-  font-size: clamp(34px, 4.2vw, 58px);
-  font-weight: 800;
-  line-height: 0.96;
-  letter-spacing: -0.03em;
+  padding: 0.06em 0 0.12em;
+  font-size: clamp(20px, 2vw, 28px);
+  font-weight: 700;
+  line-height: 1.22;
+  letter-spacing: -0.02em;
   text-wrap: balance;
-  background: linear-gradient(180deg, #ffffff 0%, #ffffff 38%, rgba(143, 163, 184, 0.88) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  filter: drop-shadow(0 8px 32px rgba(84, 215, 255, 0.12));
+  color: #f4f9ff;
+  text-shadow: 0 0 28px rgba(84, 215, 255, 0.14);
+}
+
+.flow-subtitle {
+  margin: 10px 0 0;
+  padding: 0 0.04em 0.1em;
+  max-width: min(760px, 92vw);
+  font-size: clamp(15px, 1.3vw, 18px);
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  color: rgba(210, 224, 238, 0.92);
 }
 
 /* ── Thread rig (sợi chỉ) ── */
@@ -228,66 +261,77 @@ button {
 
 /* ── Vòng đời: scale lớn cho trình chiếu ── */
 
-.story[data-scene="lifecycle"] .flow-stage-wrap {
+.story[data-scene="lifecycle"] .flow-stage-wrap,
+.story[data-scene="vi"][data-vi-phase="lifecycle"] .flow-stage-wrap {
   width: min(1720px, 92vw);
   height: clamp(420px, 58vh, 620px);
   margin-inline: auto;
 }
 
-.story[data-scene="lifecycle"] .thread-knot {
+.story[data-scene="lifecycle"] .thread-knot,
+.story[data-scene="vi"][data-vi-phase="lifecycle"] .thread-knot {
   --knot-r: clamp(36px, 3.6vw, 48px);
 }
 
-.story[data-scene="lifecycle"] .knot-copy {
+.story[data-scene="lifecycle"] .knot-copy,
+.story[data-scene="vi"][data-vi-phase="lifecycle"] .knot-copy {
   width: clamp(128px, 11.5vw, 168px);
 }
 
-.story[data-scene="lifecycle"] .knot-ring {
+.story[data-scene="lifecycle"] .knot-ring,
+.story[data-scene="vi"][data-vi-phase="lifecycle"] .knot-ring {
   border-width: 3px;
   box-shadow:
     0 0 36px rgba(84, 215, 255, 0.32),
     inset 0 0 18px rgba(84, 215, 255, 0.08);
 }
 
-.story[data-scene="lifecycle"] .knot-hole {
+.story[data-scene="lifecycle"] .knot-hole,
+.story[data-scene="vi"][data-vi-phase="lifecycle"] .knot-hole {
   width: 14px;
   height: 14px;
 }
 
-.story[data-scene="lifecycle"] .knot-num {
+.story[data-scene="lifecycle"] .knot-num,
+.story[data-scene="vi"][data-vi-phase="lifecycle"] .knot-num {
   font-size: clamp(13px, 1.1vw, 16px);
 }
 
-.story[data-scene="lifecycle"] .knot-label {
+.story[data-scene="lifecycle"] .knot-label,
+.story[data-scene="vi"][data-vi-phase="lifecycle"] .knot-label {
   font-size: clamp(14px, 1.2vw, 19px);
   line-height: 1.22;
 }
 
-.story[data-scene="lifecycle"] .knot-hint {
+.story[data-scene="lifecycle"] .knot-hint,
+.story[data-scene="vi"][data-vi-phase="lifecycle"] .knot-hint {
   font-size: clamp(11px, 0.95vw, 14px);
   line-height: 1.45;
   max-height: none;
 }
 
-.story[data-scene="lifecycle"] .thread-path-core {
+.story[data-scene="lifecycle"] .thread-path-core,
+.story[data-scene="vi"][data-vi-phase="lifecycle"] .thread-path-core {
   stroke-width: 4;
 }
 
-.story[data-scene="lifecycle"] .thread-path-shadow {
+.story[data-scene="lifecycle"] .thread-path-shadow,
+.story[data-scene="vi"][data-vi-phase="lifecycle"] .thread-path-shadow {
   stroke-width: 16;
 }
 
-.story[data-scene="lifecycle"] .thread-path-travel {
+.story[data-scene="lifecycle"] .thread-path-travel,
+.story[data-scene="vi"][data-vi-phase="lifecycle"] .thread-path-travel {
   stroke-width: 2;
 }
 
 .story[data-scene="lifecycle"] .flow-eyebrow {
-  font-size: clamp(10px, 0.85vw, 12px);
-  padding: 7px 16px;
+  font-size: clamp(8px, 0.7vw, 10px);
+  padding: 5px 12px;
 }
 
 .story[data-scene="lifecycle"] .flow-title {
-  font-size: clamp(38px, 4.8vw, 64px);
+  font-size: clamp(22px, 2.2vw, 30px);
 }
 
 .thread-rig {
@@ -447,63 +491,154 @@ button {
 
 /* ── Pressure scene (không dùng flow) ── */
 
+.story[data-scene="pressure"] .flow-header {
+  max-width: min(920px, 94vw);
+  margin-inline: auto;
+  padding:
+    clamp(64px, 8vh, 80px)
+    clamp(16px, 2.5vw, 40px)
+    clamp(8px, 1vh, 14px);
+  text-align: center;
+}
+
+.story[data-scene="pressure"] .flow-title {
+  font-size: clamp(28px, 3.2vw, 42px);
+  line-height: 1.18;
+}
+
+.story[data-scene="pressure"] .flow-subtitle {
+  margin-inline: auto;
+  max-width: min(900px, 94vw);
+  font-size: clamp(17px, 1.5vw, 22px);
+  line-height: 1.52;
+}
+
+.story[data-scene="pressure"] .flow-canvas {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 clamp(16px, 2.5vw, 40px);
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
 .pressure-stage {
   position: absolute;
   inset: 0;
   z-index: 5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(104px, 14vh, 148px) clamp(24px, 3vw, 48px) clamp(72px, 11vh, 104px);
+  display: block;
+  padding: clamp(6px, 1vh, 12px) clamp(16px, 2.5vw, 32px) clamp(56px, 8vh, 72px);
+  overflow-x: hidden;
   overflow-y: auto;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .story[data-scene="pressure"] {
   overflow: hidden;
 }
 
-.story[data-scene="pressure"] .flow-canvas {
-  padding: 0 clamp(16px, 2.5vw, 40px);
-  justify-content: center;
-  align-items: center;
-}
-
 .pressure-stage-inner {
-  width: min(1180px, 90vw);
+  width: min(1400px, 98vw);
   margin-inline: auto;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  justify-content: center;
-  gap: clamp(32px, 4.5vh, 52px);
-  transform: translateY(clamp(20px, 4.5vh, 52px));
+  align-items: center;
+  justify-content: flex-start;
+  gap: clamp(18px, 2.6vh, 28px);
+  transform: none;
+  text-align: center;
+  padding-bottom: 16px;
 }
 
 .pressure-intro {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(18px, 2.5vh, 28px);
+  gap: clamp(12px, 1.6vh, 18px);
+  width: 100%;
   text-align: center;
 }
 
-.pressure-meta {
-  max-width: min(720px, 88vw);
+.pressure-problems {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(14px, 1.8vh, 20px);
+}
+
+.pressure-problems-heading {
+  margin: 0;
+  color: rgba(244, 249, 255, 0.92);
+  font-size: clamp(16px, 1.4vw, 22px);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .pressure-cards {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(16px, 2vw, 24px);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(14px, 1.6vw, 20px);
+  width: 100%;
+  margin-inline: auto;
 }
 
-@media (max-width: 899px) {
+.pressure-card {
+  min-width: 0;
+}
+
+@media (max-width: 1100px) {
+  .pressure-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
   .pressure-cards {
     grid-template-columns: 1fr;
+    width: min(520px, 100%);
   }
+}
+
+.story[data-scene="pressure"] .pressure-hero-shell {
+  width: min(600px, 92vw);
+}
+
+.story[data-scene="pressure"] .pressure-hero-core {
+  padding: clamp(18px, 1.8vw, 24px) clamp(22px, 2.4vw, 32px);
+}
+
+.story[data-scene="pressure"] .pressure-hero-label {
+  font-size: clamp(12px, 1vw, 15px);
+  margin-bottom: 14px;
+}
+
+.story[data-scene="pressure"] .pressure-count-from {
+  font-size: clamp(36px, 4vw, 56px);
+}
+
+.story[data-scene="pressure"] .pressure-count-to {
+  font-size: clamp(48px, 5.5vw, 72px);
+}
+
+.story[data-scene="pressure"] .pressure-count-arrow {
+  font-size: clamp(28px, 3.2vw, 40px);
+}
+
+.story[data-scene="pressure"] .pressure-count-overload {
+  font-size: clamp(13px, 1.1vw, 16px);
+}
+
+.story[data-scene="pressure"] .pressure-capacity-head {
+  font-size: clamp(11px, 0.95vw, 14px);
+}
+
+.story[data-scene="pressure"] .pressure-capacity-track {
+  height: 12px;
 }
 
 .pressure-hero {
@@ -639,9 +774,10 @@ button {
   margin: 0;
   max-width: none;
   text-align: center;
-  color: rgba(220, 232, 244, 0.9);
-  font-size: clamp(15px, 1.25vw, 19px);
-  line-height: 1.45;
+  color: rgba(244, 249, 255, 0.94);
+  font-size: clamp(16px, 1.4vw, 20px);
+  font-weight: 500;
+  line-height: 1.55;
   text-wrap: balance;
 }
 
@@ -651,16 +787,17 @@ button {
   border-radius: 22px;
   border: 1px solid rgba(255, 139, 106, 0.22);
   background: rgba(255, 139, 106, 0.05);
+  text-align: left;
 }
 
 .pressure-card-core {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 12px;
+  gap: 10px;
   height: 100%;
-  min-height: clamp(132px, 14vh, 164px);
-  padding: clamp(20px, 2vw, 28px);
+  min-height: clamp(132px, 13vh, 158px);
+  padding: clamp(18px, 1.8vw, 24px);
   border-radius: 19px;
   background: rgba(6, 9, 14, 0.9);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
@@ -668,35 +805,66 @@ button {
 
 .pressure-card-index {
   flex-shrink: 0;
-  width: 40px;
-  height: 40px;
+  width: 46px;
+  height: 46px;
   display: grid;
   place-items: center;
   border-radius: 50%;
   border: 1px solid rgba(255, 139, 106, 0.4);
   background: rgba(255, 139, 106, 0.1);
   color: var(--warn);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.06em;
 }
 
 .pressure-card-core h3 {
   margin: 0;
-  font-size: clamp(20px, 1.85vw, 28px);
+  font-size: clamp(19px, 1.6vw, 24px);
   font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 1.12;
+  line-height: 1.14;
 }
 
 .pressure-card-detail {
   margin: 0;
   color: rgba(159, 176, 194, 0.95);
-  font-size: clamp(13px, 1.05vw, 16px);
+  font-size: clamp(14px, 1.15vw, 17px);
   line-height: 1.45;
 }
 
 /* ── VI Director mode ── */
+
+.story[data-scene="vi"] .flow-header {
+  max-width: min(520px, 46vw);
+  margin-inline: 0;
+  padding:
+    clamp(68px, 8.5vh, 88px)
+    clamp(24px, 3.5vw, 56px)
+    clamp(6px, 0.8vh, 12px)
+    clamp(24px, 3.5vw, 56px);
+  text-align: left;
+}
+
+.story[data-scene="vi"] .flow-title {
+  font-size: clamp(22px, 2.2vw, 30px);
+  line-height: 1.22;
+}
+
+.story[data-scene="vi"] .flow-subtitle {
+  max-width: min(520px, 90vw);
+  font-size: clamp(14px, 1.2vw, 17px);
+  line-height: 1.5;
+}
+
+.story[data-scene="vi"] .flow-canvas {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  padding: 0 clamp(16px, 2.5vw, 40px) clamp(8px, 1vh, 12px);
+}
 
 .vi-stage {
   position: absolute;
@@ -705,8 +873,8 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(96px, 13vh, 140px) clamp(20px, 3vw, 48px) clamp(64px, 10vh, 96px);
-  overflow: visible;
+  padding: 0 clamp(16px, 2.5vw, 40px) clamp(48px, 7vh, 60px);
+  overflow: hidden;
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
@@ -717,75 +885,55 @@ button {
   visibility: visible;
 }
 
-.story[data-scene="vi"] .flow-canvas {
-  justify-content: center;
-  align-items: center;
-}
-
 .story[data-scene="vi"][data-vi-phase="platform"] .flow-stage-wrap {
   pointer-events: none;
 }
 
 .story[data-scene="vi"][data-vi-phase="lifecycle"] .flow-stage-wrap {
-  height: clamp(360px, 52vh, 540px);
-  max-width: min(1180px, 92vw);
-  margin-inline: auto;
-}
-
-.story[data-scene="vi"][data-vi-interactive="true"] .flow-stage-wrap {
-  width: min(1720px, 92vw);
-  height: clamp(420px, 58vh, 620px);
-}
-
-.story[data-scene="vi"][data-vi-interactive="true"] .thread-path-core {
-  stroke-width: 4;
-}
-
-.story[data-scene="vi"][data-vi-interactive="true"] .thread-path-shadow {
-  stroke-width: 16;
+  pointer-events: auto;
 }
 
 .vi-stage-inner {
   position: relative;
-  width: min(960px, 94vw);
+  width: min(900px, 94vw);
+  max-height: 100%;
   margin-inline: auto;
-  transform: translateY(clamp(8px, 2vh, 24px));
+  transform: none;
 }
 
 .vi-platform {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(24px, 3.5vh, 40px);
+  justify-content: center;
+  gap: clamp(12px, 1.8vh, 20px);
   text-align: center;
+  width: 100%;
 }
 
-.vi-definition-title {
-  margin: 0 0 12px;
-  font-size: clamp(28px, 3.2vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  background: linear-gradient(180deg, #fff 0%, rgba(143, 163, 184, 0.9) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+/* hidden phải thắng display:flex — nếu không badge VI lộ ở beat 1 */
+.vi-stage [hidden],
+.vi-lifecycle-overlay[hidden] {
+  display: none !important;
 }
 
-.vi-definition-lede {
-  margin: 0 auto;
-  max-width: min(720px, 90vw);
-  color: rgba(210, 224, 238, 0.9);
-  font-size: clamp(15px, 1.3vw, 19px);
-  line-height: 1.5;
-  text-wrap: balance;
+.vi-define-prompt {
+  margin: 0;
+  padding: clamp(14px, 1.6vw, 20px) clamp(22px, 2.4vw, 32px);
+  border-radius: 999px;
+  border: 1px dashed rgba(84, 215, 255, 0.28);
+  background: rgba(84, 215, 255, 0.05);
+  color: rgba(159, 176, 194, 0.95);
+  font-size: clamp(14px, 1.15vw, 17px);
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .vi-layer-stack {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  width: min(640px, 92vw);
+  gap: clamp(10px, 1.4vh, 14px);
+  width: min(780px, 92vw);
 }
 
 .vi-layer {
@@ -831,7 +979,7 @@ button {
 }
 
 .vi-layer-core {
-  padding: clamp(14px, 1.5vw, 20px) clamp(18px, 2vw, 24px);
+  padding: clamp(18px, 1.8vw, 24px) clamp(22px, 2.2vw, 30px);
   border-radius: 16px;
   background: rgba(5, 10, 16, 0.92);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
@@ -839,8 +987,8 @@ button {
 
 .vi-layer-label {
   display: block;
-  margin-bottom: 10px;
-  font-size: clamp(14px, 1.2vw, 17px);
+  margin-bottom: 12px;
+  font-size: clamp(18px, 1.55vw, 24px);
   font-weight: 700;
   letter-spacing: -0.01em;
   text-align: left;
@@ -849,16 +997,16 @@ button {
 .vi-layer-keywords {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 
 .vi-keyword {
-  padding: 5px 12px;
+  padding: 7px 14px;
   border-radius: 999px;
   border: 1px solid rgba(84, 215, 255, 0.22);
   background: rgba(84, 215, 255, 0.06);
   color: rgba(200, 220, 235, 0.92);
-  font-size: clamp(11px, 0.95vw, 13px);
+  font-size: clamp(14px, 1.15vw, 17px);
   font-weight: 600;
 }
 
@@ -871,23 +1019,23 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: clamp(20px, 2.5vw, 28px) clamp(36px, 4vw, 52px);
-  border-radius: 24px;
+  gap: 8px;
+  padding: clamp(28px, 3vw, 36px) clamp(48px, 5vw, 68px);
+  border-radius: 28px;
   border: 1px solid rgba(84, 215, 255, 0.35);
   background: rgba(84, 215, 255, 0.08);
-  box-shadow: 0 0 48px rgba(84, 215, 255, 0.2);
+  box-shadow: 0 0 56px rgba(84, 215, 255, 0.22);
 }
 
 .vi-transition-badge span {
-  font-size: clamp(36px, 4vw, 52px);
+  font-size: clamp(44px, 5vw, 64px);
   font-weight: 800;
   letter-spacing: -0.04em;
   color: var(--accent);
 }
 
 .vi-transition-badge em {
-  font-size: 12px;
+  font-size: clamp(12px, 1vw, 15px);
   font-style: normal;
   font-weight: 600;
   letter-spacing: 0.14em;
@@ -904,21 +1052,22 @@ button {
 
 .vi-lifecycle-overlay--interactive .vi-interactive-hint {
   position: fixed;
-  top: clamp(92px, 12vh, 128px);
+  top: clamp(76px, 10vh, 108px);
   left: 50%;
   z-index: 9;
-  width: min(640px, 92vw);
+  width: min(720px, 92vw);
   margin: 0;
   transform: translateX(-50%);
   text-align: center;
   pointer-events: none;
+  font-size: clamp(13px, 1.1vw, 16px);
 }
 
 .vi-lifecycle-overlay--interactive .vi-detail-wrap {
   position: fixed;
   right: clamp(20px, 3.5vw, 48px);
-  bottom: clamp(72px, 11vh, 104px);
-  width: min(420px, 34vw);
+  bottom: clamp(64px, 10vh, 96px);
+  width: min(560px, 40vw);
   pointer-events: auto;
 }
 
@@ -959,8 +1108,8 @@ button {
 }
 
 .vi-detail-panel-shell {
-  padding: 3px;
-  border-radius: 20px;
+  padding: 4px;
+  border-radius: 24px;
   border: 1px solid rgba(84, 215, 255, 0.28);
   background: rgba(84, 215, 255, 0.05);
 }
@@ -971,8 +1120,8 @@ button {
 }
 
 .vi-detail-panel-core {
-  padding: clamp(16px, 1.6vw, 22px);
-  border-radius: 17px;
+  padding: clamp(22px, 2.2vw, 30px) clamp(24px, 2.4vw, 32px);
+  border-radius: 20px;
   background: rgba(5, 12, 20, 0.94);
   box-shadow:
     0 24px 60px rgba(0, 0, 0, 0.45),
@@ -981,12 +1130,12 @@ button {
 
 .vi-panel-step {
   display: inline-block;
-  margin-bottom: 8px;
-  padding: 4px 10px;
+  margin-bottom: 12px;
+  padding: 6px 14px;
   border-radius: 999px;
   border: 1px dashed rgba(84, 215, 255, 0.35);
   color: var(--accent);
-  font-size: 10px;
+  font-size: clamp(11px, 0.95vw, 14px);
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -998,40 +1147,42 @@ button {
 }
 
 .vi-panel-header h3 {
-  margin: 0 0 4px;
-  font-size: clamp(18px, 1.6vw, 24px);
+  margin: 0 0 6px;
+  font-size: clamp(26px, 2.4vw, 36px);
   font-weight: 700;
   letter-spacing: -0.02em;
+  line-height: 1.12;
 }
 
 .vi-panel-header p {
   margin: 0;
   color: var(--muted);
-  font-size: 12px;
+  font-size: clamp(14px, 1.2vw, 18px);
+  line-height: 1.35;
 }
 
 .vi-panel-list {
-  margin: 14px 0 0;
+  margin: 18px 0 0;
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 8px;
+  gap: clamp(10px, 1.2vh, 14px);
 }
 
 .vi-panel-list li {
   position: relative;
-  padding-left: 14px;
-  color: rgba(159, 176, 194, 0.95);
-  font-size: clamp(12px, 1vw, 14px);
-  line-height: 1.45;
+  padding-left: 18px;
+  color: rgba(210, 224, 238, 0.96);
+  font-size: clamp(15px, 1.25vw, 19px);
+  line-height: 1.48;
 }
 
 .vi-panel-list li::before {
   position: absolute;
   left: 0;
-  top: 0.55em;
-  width: 4px;
-  height: 4px;
+  top: 0.58em;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--accent);
   box-shadow: 0 0 8px var(--accent);
@@ -1175,12 +1326,18 @@ button {
 
 @media (max-width: 1100px) {
   .flow-header {
-    position: relative;
-    top: auto;
-    left: auto;
     max-width: none;
-    padding: clamp(72px, 10vh, 96px) 20px 0;
+    padding:
+      clamp(72px, 10vh, 96px)
+      20px
+      clamp(10px, 1.4vh, 18px);
     text-align: center;
+  }
+
+  .story[data-scene="vi"] .flow-header,
+  .story[data-scene="lifecycle"] .flow-header {
+    text-align: left;
+    padding-left: 20px;
   }
 
   .flow-stage-wrap {
@@ -1211,17 +1368,17 @@ button {
   }
 
   .vi-stage {
-    position: relative;
-    inset: auto;
-    padding-top: clamp(72px, 10vh, 96px);
-    overflow-y: auto;
+    position: absolute;
+    inset: 0;
+    padding: 0 clamp(16px, 2.5vw, 40px) clamp(48px, 7vh, 60px);
+    overflow: hidden;
   }
 
   .vi-lifecycle-overlay--interactive .vi-detail-wrap {
     position: relative;
     right: auto;
     bottom: auto;
-    width: min(520px, 92vw);
+    width: min(600px, 94vw);
     margin: 24px auto 0;
   }
 
@@ -1267,18 +1424,21 @@ button {
   .thread-knot:nth-child(6) { top: 66% !important; }
 
   .flow-header {
-    padding-top: 64px;
-    text-align: left;
-    padding-left: 16px;
-    padding-right: 16px;
+    max-width: none;
+    padding:
+      clamp(72px, 10vh, 96px)
+      16px
+      clamp(10px, 1.4vh, 18px);
+    text-align: center;
   }
 
   .flow-title {
-    font-size: 32px;
+    font-size: clamp(18px, 4.8vw, 24px);
+    line-height: 1.24;
   }
 
   .story[data-scene="lifecycle"] .flow-title {
-    font-size: 32px;
+    font-size: clamp(20px, 5vw, 26px);
   }
 
   .scene-nav {

@@ -68,10 +68,7 @@ export function renderViStage() {
 
   root.innerHTML = `
     <div class="vi-platform" id="vi-platform">
-      <div class="vi-definition" id="vi-definition">
-        <h2 class="vi-definition-title">${viDefinition.title}</h2>
-        <p class="vi-definition-lede">${viDefinition.lede}</p>
-      </div>
+      <p class="vi-define-prompt" id="vi-define-prompt">Nhấn <strong>Space</strong> để xem ba lớp năng lực</p>
       <div class="vi-layer-stack" id="vi-layer-stack" hidden aria-label="Ba lớp năng lực ATS VI">
         ${layersHtml}
       </div>
@@ -213,7 +210,53 @@ function updateBeatIndicator() {
   }
 }
 
+function syncViHeaderSubtitle(beat) {
+  const subtitle = document.querySelector('[data-bind="subtitle"]')
+  if (!subtitle)
+    return
+
+  if (beat?.phase === 'platform' && beat.id === 'define') {
+    subtitle.textContent = viDefinition.lede
+    subtitle.hidden = false
+    return
+  }
+
+  subtitle.textContent = ''
+  subtitle.hidden = true
+}
+
 const LAYER_ORDER = ['knowledge', 'assistant', 'workflow']
+const VI_GSAP_TARGETS = '#vi-layer-stack, #vi-platform, .vi-layer, #vi-transition-badge, #vi-define-prompt, #vi-interactive-hint, #vi-detail-wrap, [data-bind="subtitle"]'
+
+function clearViGsapState() {
+  gsap.killTweensOf(VI_GSAP_TARGETS)
+  gsap.set(VI_GSAP_TARGETS, {
+    autoAlpha: 1,
+    y: 0,
+    scale: 1,
+    clearProps: 'transform,filter,opacity,visibility',
+  })
+}
+
+function syncPlatformLayerOpacity(beat) {
+  const stack = document.getElementById('vi-layer-stack')
+  if (stack) {
+    if (beat.activeLayer || beat.id === 'transition')
+      gsap.set(stack, { autoAlpha: 1, scale: 1, y: 0 })
+  }
+
+  document.querySelectorAll('.vi-layer').forEach((layer) => {
+    if (!layer.classList.contains('is-visible')) {
+      gsap.set(layer, { autoAlpha: 0, visibility: 'hidden' })
+      return
+    }
+    if (layer.classList.contains('is-dim')) {
+      gsap.set(layer, { autoAlpha: 0.45, visibility: 'visible' })
+      return
+    }
+    gsap.set(layer, { autoAlpha: 1, visibility: 'visible', y: 0, scale: 1 })
+  })
+}
 
 function setLayerStates(activeLayerId) {
   const activeIndex = activeLayerId ? LAYER_ORDER.indexOf(activeLayerId) : -1
@@ -254,7 +297,6 @@ function applyFlowVisibilityForBeat(index) {
 function applyPlatformVisibility(beat) {
   const platform = document.getElementById('vi-platform')
   const overlay = document.getElementById('vi-lifecycle-overlay')
-  const definition = document.getElementById('vi-definition')
   const layerStack = document.getElementById('vi-layer-stack')
   const badge = document.getElementById('vi-transition-badge')
 
@@ -266,9 +308,6 @@ function applyPlatformVisibility(beat) {
   if (platform)
     platform.hidden = beat.phase === 'lifecycle'
 
-  if (definition)
-    definition.hidden = beat.id !== 'define'
-
   if (layerStack)
     layerStack.hidden = !beat.activeLayer && beat.id !== 'transition'
 
@@ -279,6 +318,46 @@ function applyPlatformVisibility(beat) {
     setLayerStates(beat.activeLayer)
   else if (beat.id === 'define' || beat.id === 'transition')
     setLayerStates(null)
+
+  syncViHeaderSubtitle(beat)
+  syncHiddenViElements(beat)
+}
+
+function syncHiddenViElements(beat) {
+  const badge = document.getElementById('vi-transition-badge')
+  const layerStack = document.getElementById('vi-layer-stack')
+  const platform = document.getElementById('vi-platform')
+  const definePrompt = document.getElementById('vi-define-prompt')
+
+  if (definePrompt) {
+    const show = beat.id === 'define'
+    definePrompt.hidden = !show
+    gsap.set(definePrompt, show
+      ? { autoAlpha: 1, visibility: 'visible', y: 0 }
+      : { autoAlpha: 0, visibility: 'hidden' })
+  }
+
+  if (badge) {
+    const show = beat.id === 'transition'
+    badge.hidden = !show
+    gsap.set(badge, show
+      ? { autoAlpha: 1, visibility: 'visible', y: 0, scale: 1 }
+      : { autoAlpha: 0, visibility: 'hidden', y: 0, scale: 1 })
+  }
+
+  if (layerStack) {
+    const show = Boolean(beat.activeLayer) || beat.id === 'transition'
+    layerStack.hidden = !show
+    if (!show)
+      gsap.set(layerStack, { autoAlpha: 0, visibility: 'hidden' })
+  }
+
+  if (platform) {
+    const show = beat.phase !== 'lifecycle'
+    platform.hidden = !show
+    if (show)
+      gsap.set(platform, { autoAlpha: 1, visibility: 'visible' })
+  }
 }
 
 function applyLifecycleOverlay(beat) {
@@ -327,6 +406,8 @@ export function applyViBeatDom(index) {
 
   if (beat.phase === 'lifecycle')
     applyLifecycleOverlay(beat)
+  else
+    syncPlatformLayerOpacity(beat)
 
   updateBeatIndicator()
 }
@@ -335,23 +416,30 @@ function animatePlatformBeat(beat, { fromTransition = false } = {}) {
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
   if (beat.id === 'define') {
-    tl.fromTo('#vi-definition', { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.65 })
+    tl.fromTo('[data-bind="subtitle"]', { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.55 })
+      .fromTo('#vi-define-prompt', { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.5 }, '-=0.35')
     return tl
   }
 
   if (beat.activeLayer) {
-    const layer = document.querySelector(`.vi-layer[data-layer="${beat.activeLayer}"]`)
+    const activeSelector = `.vi-layer[data-layer="${beat.activeLayer}"]`
+    const layer = document.querySelector(activeSelector)
+    tl.set('#vi-layer-stack', { autoAlpha: 1, scale: 1, y: 0 }, 0)
     if (layer && !layer.classList.contains('was-shown')) {
       layer.classList.add('was-shown')
       tl.fromTo(layer, { autoAlpha: 0, y: 32, scale: 0.96 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.6 })
     }
-    tl.to('.vi-layer.is-dim', { autoAlpha: 0.4, duration: 0.4 }, '<')
-    tl.to(`.vi-layer[data-layer="${beat.activeLayer}"]`, { autoAlpha: 1, duration: 0.4 }, '<')
+    else {
+      tl.set(activeSelector, { autoAlpha: 1, y: 0, scale: 1, visibility: 'visible' }, 0)
+    }
+    tl.to('.vi-layer.is-dim', { autoAlpha: 0.45, duration: 0.4 }, '<')
+    tl.to(activeSelector, { autoAlpha: 1, duration: 0.4 }, '<')
     return tl
   }
 
   if (beat.id === 'transition') {
-    tl.to('#vi-definition', { autoAlpha: 0, y: -12, duration: 0.35 })
+    tl.to('[data-bind="subtitle"]', { autoAlpha: 0, y: -8, duration: 0.3 })
+      .to('#vi-define-prompt', { autoAlpha: 0, y: -8, duration: 0.3 }, '<')
       .to('#vi-layer-stack', { autoAlpha: 0, scale: 0.88, y: -20, duration: 0.5 }, '<')
       .fromTo('#vi-transition-badge', { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.55, ease: 'back.out(1.5)' }, '-=0.15')
     return tl
@@ -410,7 +498,8 @@ export function goToViBeat(index, { animate = true, reduceMotion = false } = {})
   applyViBeatDom(next)
 
   if (reduceMotion || !animate) {
-    gsap.set('#vi-definition, .vi-layer, #vi-transition-badge, #vi-interactive-hint, #vi-detail-wrap', { autoAlpha: 1, clearProps: 'x,y,scale' })
+    clearViGsapState()
+    syncPlatformLayerOpacity(beat)
     return Promise.resolve()
   }
 
@@ -449,6 +538,11 @@ export function prevViBeat(options = {}) {
 }
 
 export function resetViBeat({ reduceMotion = false } = {}) {
+  if (beatTween) {
+    beatTween.kill()
+    beatTween = null
+  }
+
   currentBeatIndex = 0
   selectedStepId = null
   document.querySelectorAll('.vi-layer').forEach((l) => l.classList.remove('was-shown', 'is-active', 'is-dim', 'is-visible'))
@@ -456,10 +550,13 @@ export function resetViBeat({ reduceMotion = false } = {}) {
   if (root) {
     delete root.dataset.viSelectedStep
     delete root.dataset.viInteractive
+    delete root.dataset.viBeat
+    delete root.dataset.viPhase
   }
+  clearViGsapState()
   applyViBeatDom(0)
   if (!reduceMotion) {
-    gsap.set('#vi-definition, .vi-layer, #vi-transition-badge, #vi-detail-wrap', {
+    gsap.set('.vi-layer, #vi-transition-badge, #vi-detail-wrap', {
       clearProps: 'transform,filter',
     })
   }
@@ -473,21 +570,21 @@ export function initViBeatState() {
 export function animateViSceneIn({ reduceMotion = false } = {}) {
   resetViBeat({ reduceMotion })
   return goToViBeat(0, { animate: !reduceMotion, reduceMotion }).then(() => {
-    gsap.set('#vi-definition, #vi-platform', { autoAlpha: 1, y: 0, visibility: 'visible' })
+    gsap.set('#vi-platform', { autoAlpha: 1, y: 0, visibility: 'visible' })
   })
 }
 
 export function settleViScene({ reduceMotion = false } = {}) {
-  if (beatTween) {
-    beatTween.kill()
-    beatTween = null
-  }
-
   resetViBeat({ reduceMotion })
-  gsap.set('#vi-definition, .vi-layer, #vi-transition-badge, #vi-interactive-hint, #vi-detail-wrap', {
+  clearViGsapState()
+  const beat = viBeats[currentBeatIndex] ?? viBeats[0]
+  syncPlatformLayerOpacity(beat)
+  syncHiddenViElements(beat)
+  gsap.set('#vi-interactive-hint, #vi-detail-wrap, [data-bind="subtitle"]', {
     autoAlpha: 1,
     clearProps: 'x,y,scale,filter',
   })
+  gsap.set('#vi-platform', { autoAlpha: 1, clearProps: 'x,y,scale,filter' })
 }
 
 export function onViSceneEnter({ reduceMotion = false } = {}) {
@@ -509,6 +606,13 @@ export function onViSceneLeave() {
   const rig = document.querySelector('.thread-rig')
   const footerHint = document.querySelector('.footer-hint-text')
 
+  if (beatTween) {
+    beatTween.kill()
+    beatTween = null
+  }
+
+  resetViBeat({ reduceMotion: true })
+
   if (viStage) {
     viStage.hidden = true
     gsap.set(viStage, { autoAlpha: 0, visibility: 'hidden', pointerEvents: 'none' })
@@ -520,16 +624,8 @@ export function onViSceneLeave() {
   if (footerHint)
     footerHint.textContent = 'Space beat · ↑↓ · ← → scene · Auto tour'
 
+  syncViHeaderSubtitle(null)
+
   if (rig)
     delete rig.dataset.focusStep
-
-  selectedStepId = null
-  if (story()) {
-    delete story().dataset.viBeat
-    delete story().dataset.viPhase
-    delete story().dataset.viInteractive
-    delete story().dataset.viSelectedStep
-  }
-
-  currentBeatIndex = 0
 }

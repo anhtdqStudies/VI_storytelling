@@ -58,11 +58,12 @@ export const lifecycleSteps = [
 ]
 
 export const pressureNarrative = {
-  lede: 'Một dự án — kinh nghiệm cá nhân đủ. Nhiều dự án — cần nhanh, đồng đều và tái dùng tri thức.',
+  lede: 'Một dự án có thể dựa vào kinh nghiệm cá nhân. Nhưng khi nhiều dự án chạy song song, tốc độ, nguồn lực và chất lượng bắt đầu mất kiểm soát.',
+  problemsHeading: 'Bốn vấn đề',
   meterLabel: 'Dự án song song',
   meterFrom: 3,
   meterTo: 18,
-  overloadLabel: 'overload',
+  overloadLabel: 'QUÁ TẢI',
   capacityLabel: 'Mức tải nguồn lực',
 }
 
@@ -70,17 +71,22 @@ export const painPoints = [
   {
     id: 'speed',
     title: 'Tốc độ',
-    detail: 'Tổng hợp tài liệu và tìm lại thông tin mất nhiều thời gian.',
+    detail: 'Thời gian bị tiêu tốn vào việc tìm kiếm, tổng hợp và kiểm tra lại thông tin.',
   },
   {
     id: 'resources',
     title: 'Nguồn lực',
-    detail: 'Vài nhân sự có kinh nghiệm gánh phần lớn công việc.',
+    detail: 'Một số ít nhân sự giàu kinh nghiệm phải liên tục gánh phần việc quan trọng nhất.',
   },
   {
-    id: 'consistency',
-    title: 'Tính nhất quán',
-    detail: 'Cùng dạng dự án nhưng cách chuẩn bị và đầu vào khác nhau.',
+    id: 'management',
+    title: 'Quản lý',
+    detail: 'Khó theo dõi tiến độ, đầu việc, phiên bản tài liệu và trạng thái của từng dự án.',
+  },
+  {
+    id: 'traceability',
+    title: 'Truy xuất',
+    detail: 'Khi cần xem lại dự án cũ, thông tin nằm rải rác và phụ thuộc vào trí nhớ cá nhân.',
   },
 ]
 
@@ -94,7 +100,7 @@ export const scenes = [
   {
     id: 'pressure',
     label: 'Áp lực',
-    eyebrow: 'Scale bottleneck',
+    eyebrow: 'Khi scale nhiều dự án',
     title: 'Khó khăn khi scale',
   },
   {
