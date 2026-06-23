@@ -827,6 +827,17 @@ button {
   box-shadow: 0 0 20px rgba(255, 95, 74, 0.45);
 }
 
+.pressure-illustration-note {
+  margin: clamp(12px, 1.4vh, 16px) 0 0;
+  color: rgba(143, 163, 184, 0.55);
+  font-size: clamp(10px, 0.85vw, 12px);
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0.02em;
+  text-align: center;
+  text-wrap: balance;
+}
+
 .pressure-lede {
   margin: 0;
   max-width: none;

@@ -62,9 +62,13 @@ export const pressureNarrative = {
   problemsHeading: 'Bốn vấn đề',
   meterLabel: 'Dự án song song',
   meterFrom: 3,
-  meterTo: 18,
+  meterTo: 15,
+  meterToSuffix: '+',
   overloadLabel: 'QUÁ TẢI',
   capacityLabel: 'Mức tải nguồn lực',
+  capacityOverLabel: '>100%',
+  capacityThreshold: 100,
+  illustrationNote: 'Số liệu minh họa xu hướng khi scale',
 }
 
 export const painPoints = [
@@ -76,7 +80,7 @@ export const painPoints = [
   {
     id: 'resources',
     title: 'Nguồn lực',
-    detail: 'Một số ít nhân sự giàu kinh nghiệm phải liên tục gánh phần việc quan trọng nhất.',
+    detail: 'Dự án tăng nhanh, nhưng số lượng nhân sự đủ năng lực xử lý lại có giới hạn.',
   },
   {
     id: 'management',

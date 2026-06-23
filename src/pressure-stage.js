@@ -1,6 +1,33 @@
 import { gsap } from 'gsap'
 import { painPoints, pressureNarrative } from './data.js'
 
+function formatMeterCounter(value, narrative) {
+  const rounded = Math.round(value)
+  if (rounded >= narrative.meterTo)
+    return `${narrative.meterTo}${narrative.meterToSuffix ?? ''}`
+  return String(rounded)
+}
+
+function formatCapacityLabel(cap, narrative) {
+  const rounded = Math.round(cap)
+  if (rounded >= (narrative.capacityThreshold ?? 100))
+    return narrative.capacityOverLabel ?? '>100%'
+  return `${rounded}%`
+}
+
+function applyPressureHeroFinalState(narrative) {
+  const counter = document.getElementById('pressure-counter')
+  const capacityFill = document.getElementById('pressure-capacity-fill')
+  const capacityPct = document.getElementById('pressure-capacity-pct')
+
+  if (counter)
+    counter.textContent = formatMeterCounter(narrative.meterTo, narrative)
+  if (capacityPct)
+    capacityPct.textContent = formatCapacityLabel(narrative.capacityThreshold ?? 100, narrative)
+  if (capacityFill)
+    capacityFill.style.width = '100%'
+}
+
 export function renderPressureStage() {
   const root = document.getElementById('pressure-stage-inner')
   if (!root)
@@ -31,6 +58,7 @@ export function renderPressureStage() {
                 <span class="pressure-capacity-fill" id="pressure-capacity-fill"></span>
               </div>
             </div>
+            <p class="pressure-illustration-note">${n.illustrationNote}</p>
           </div>
         </div>
       </div>
@@ -72,12 +100,7 @@ export function animatePressureSceneIn({ reduceMotion = false } = {}) {
 
   if (reduceMotion) {
     gsap.set('.pressure-intro, .pressure-problems-heading, .pressure-card', { autoAlpha: 1, y: 0 })
-    if (counter)
-      counter.textContent = String(n.meterTo)
-    if (capacityPct)
-      capacityPct.textContent = '118%'
-    if (capacityFill)
-      capacityFill.style.width = '100%'
+    applyPressureHeroFinalState(n)
     ensurePressureCardsVisible()
     return
   }
@@ -92,18 +115,20 @@ export function animatePressureSceneIn({ reduceMotion = false } = {}) {
 
   if (counter) {
     const obj = { val: n.meterFrom, cap: 0 }
+    const capTarget = n.capacityThreshold ?? 100
     tl.to(obj, {
       val: n.meterTo,
-      cap: 118,
+      cap: capTarget,
       duration: 1.6,
       ease: 'power2.inOut',
       onUpdate: () => {
-        counter.textContent = String(Math.round(obj.val))
+        counter.textContent = formatMeterCounter(obj.val, n)
         if (capacityPct)
-          capacityPct.textContent = `${Math.round(obj.cap)}%`
+          capacityPct.textContent = formatCapacityLabel(obj.cap, n)
         if (capacityFill)
           capacityFill.style.width = `${Math.min(obj.cap, 100)}%`
       },
+      onComplete: () => applyPressureHeroFinalState(n),
     }, '-=0.15')
   }
 
@@ -138,16 +163,7 @@ export function settlePressureScene() {
   gsap.killTweensOf('.pressure-intro, .pressure-problems-heading, .pressure-card, .pressure-hero-glow, #pressure-counter, #pressure-capacity-fill, #pressure-capacity-pct')
   gsap.set('.pressure-intro, .pressure-problems-heading, .pressure-card', { autoAlpha: 1, y: 0, clearProps: 'filter' })
 
-  const counter = document.getElementById('pressure-counter')
-  const capacityFill = document.getElementById('pressure-capacity-fill')
-  const capacityPct = document.getElementById('pressure-capacity-pct')
-
-  if (counter)
-    counter.textContent = String(n.meterTo)
-  if (capacityPct)
-    capacityPct.textContent = '118%'
-  if (capacityFill)
-    capacityFill.style.width = '100%'
+  applyPressureHeroFinalState(n)
 
   startPressureGlowLoop()
   ensurePressureCardsVisible()
